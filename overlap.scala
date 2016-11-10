@@ -16,11 +16,30 @@ object overlap {
     val lines = contents.split("\n")
 
     val it = lines.iterator
+    val delimiter_pattern = """^>(.*)""".r
+    var label2read = Map[String,String]()
+    var current_label = ""
 
     while(it.hasNext) {
-      println("line: " + it.next())
+      var line = it.next()
+      println("line: " + line)
+      line match {
+        case delimiter_pattern(label) => {
+          label2read = label2read + (label -> "")
+          current_label = label
+        }
+        case _ => {
+          label2read = label2read + (current_label -> (label2read(current_label) + line))
+        }
+      }
     }
 
+    val keys_of_reads = label2read.keysIterator
+    while(keys_of_reads.hasNext) {
+      val key = keys_of_reads.next()
+      println("key: " + key)
+      println("val:" + label2read(key))
+    }
   }
 }
 
