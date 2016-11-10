@@ -3,14 +3,62 @@ object overlap {
     println("usage: overlap <input file>")
   }
 
+  def a_then_b(a: String,b:String): Integer = {
+    // Find i, if any, such that:
+    // - i > 0
+    // - i < a.length
+    // - a[i,a.length] == b[0,a.length]
+    //
+    for(i <- 1 to (a.length / 2)) {
+      if (a.slice(i,a.length) == b.slice(0,a.length - i)) {
+        return i
+      }
+    }
+    return 0
+  }
+
   def main(args: Array[String]): Unit = {
     if (args.length != 1) {
       usage()
       System.exit(1)
     }
-    println("reading from input file:" + args(0));
-    val contents = scala.io.Source.fromFile(args(0)).mkString
-    println(" length of file" + contents.length)
+
+    val label2read = read_input(args(0))
+
+    val lefts = label2read.keysIterator
+
+    while(lefts.hasNext) {
+      var first_label = lefts.next()
+      val rights = label2read.keysIterator
+
+      while(rights.hasNext) {
+        val second_label = rights.next()
+        val a = label2read(first_label)
+        val b = label2read(second_label)
+
+        val second_as_b =
+          a_then_b(a,b)
+
+        if (second_as_b > 0) {
+          println(first_label + "@" + second_as_b + " is a prefix of " +
+            second_label + ":" + 
+            a.slice(second_as_b,second_as_b + 5) + ".." +
+            a.slice(a.length - 5,a.length) + " == " +
+            b.slice(0,5) + ".." +
+            b.slice(a.length - second_as_b - 5,
+              (a.length - second_as_b)))
+        }
+      }
+    }
+  }
+
+  // read input from file named _filename_ into a map from
+  // a label (e.g. Rosalind_1280) to a 'read':
+  // (a string made of character set {A,C,G,T}).
+  def read_input(input_filename: String): Map[String,String] = {
+    println("reading from input file:" + input_filename)
+    val contents = scala.io.Source.fromFile(input_filename).mkString
+    println(" length of file:" + contents.length)
 
     // split into strings
     val lines = contents.split("\n")
@@ -33,14 +81,12 @@ object overlap {
       }
     }
 
-    val keys_of_reads = label2read.keysIterator
-    while(keys_of_reads.hasNext) {
-      val key = keys_of_reads.next()
-      println("key: " + key)
-      println("val:" + label2read(key))
-    }
+    return label2read
+
   }
+
 }
+
 
 
 
