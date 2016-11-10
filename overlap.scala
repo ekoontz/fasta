@@ -42,9 +42,9 @@ object overlap {
         if (second_as_b > 0) {
           println(first_label + "@" + second_as_b + " is a prefix of " +
             second_label + ":" + 
-            a.slice(second_as_b,second_as_b + 5) + ".." +
+            a.slice(second_as_b,second_as_b + 5) + " ... " +
             a.slice(a.length - 5,a.length) + " == " +
-            b.slice(0,5) + ".." +
+            b.slice(0,5) + " ... " +
             b.slice(a.length - second_as_b - 5,
               (a.length - second_as_b)))
         }
@@ -53,8 +53,8 @@ object overlap {
   }
 
   // read input from file named _filename_ into a map from
-  // a label (e.g. Rosalind_1280) to a 'read':
-  // (a string made of character set {A,C,G,T}).
+  // a label (e.g. "Rosalind_1280") to a 'read':
+  // a string made of characters from the set: {A,C,G,T}.
   def read_input(input_filename: String): Map[String,String] = {
     println("reading from input file:" + input_filename)
     val contents = scala.io.Source.fromFile(input_filename).mkString
