@@ -22,7 +22,6 @@ object overlap {
 
     while(it.hasNext) {
       var line = it.next()
-      println("line: " + line)
       line match {
         case delimiter_pattern(label) => {
           label2read = label2read + (label -> "")
