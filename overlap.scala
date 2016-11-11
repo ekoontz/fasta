@@ -27,12 +27,14 @@ object overlap {
       System.exit(1)
     }
 
+    // load reads into a map from labels (e.g. "Rosalind_1836") to 
+    // reads: strings made of characters from the set: {A,C,G,T}.
     val reads = read_input(args(0))
-    val lefts = reads.keysIterator
 
     var prefix_at = Map[String,Integer]()
     var prefix_label = Map[String,String]()
 
+    val lefts = reads.keysIterator
     while(lefts.hasNext) {
       var left_label = lefts.next
       val left_read = reads(left_label)
@@ -47,9 +49,7 @@ object overlap {
         if (at > 0) {
           prefix_at = prefix_at + (left_label -> at)
           prefix_label = prefix_label + (left_label -> right_label)
-          log_finding(
-            left_label,right_label,
-            left_read,right_read,at)
+          log_finding(left_label,right_label,left_read,right_read,at)
         }
       }
     }
