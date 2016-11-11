@@ -146,15 +146,20 @@ object overlap {
   def find_leftmost_read(overlaps:Map[String,(Integer,String)]):String = {
     // Find the leftmost of the reads: the one which does not overlap
     // any other read's right side.
+
+    // Begin with the set of all reads, and remove all reads that are to the right
+    // of some other read. The surviving single member of the set is the leftmost read.
     var first_in_string = overlaps.keys.toSet
     var overlap_i = overlaps.keys.iterator
     while(overlap_i.hasNext) {
       val left_label = overlap_i.next
       val (_,right_label) = overlaps(left_label)
+      // Remove _right_label_ as a possible leftmost read, since it's to the right
+      // of some other read.
       first_in_string = first_in_string - right_label
     }
 
-    // There should be a single label left in the set: first_in_string.
+    // There should be a single label left in the set: if not, exit with an error.
     if (first_in_string.size != 1) {
       System.err.println(" Error: no unique first read.")
       System.exit(1)
