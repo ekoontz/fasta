@@ -30,8 +30,7 @@ object overlap {
       val at = left_right_overlap(left_read,right_read)
 
       if (at > 0) {
-        // we found the overlap. add the label and the overlap position as key and value to the
-        // prefix_at and prefix_label maps.
+        // we found the overlap.
         return (at,right_label)
       }
     }
@@ -48,8 +47,8 @@ object overlap {
     // reads: strings made of characters from the set: {A,C,G,T}.
     val reads = read_input(args(0))
 
-    var prefix_at = Map[String,Integer]()
     var prefix_label = Map[String,String]()
+    var overlaps = Map[String,(Integer,String)]()
 
     val lefts = reads.keysIterator
     while(lefts.hasNext) {
@@ -58,19 +57,19 @@ object overlap {
 
       val (at,right_label) = find_overlap(left_read,reads)
       if (at != 0) {
-        prefix_at = prefix_at + (left_label -> at)
         prefix_label = prefix_label + (left_label -> right_label)
+        overlaps += (left_label -> (at,right_label))
       }
     }
 
     // find the first of the reads: the one which is not a
     // right side (a value of any key in prefixes)
-    var first_in_string = prefix_label.keys.toSet
-    var prefix_label_i = prefix_label.keys.iterator
+    var first_in_string = overlaps.keys.toSet
+    var prefix_label_i = overlaps.keys.iterator
 
     while(prefix_label_i.hasNext) {
       val left_label = prefix_label_i.next
-      val right_label = prefix_label(left_label)
+      val (_,right_label) = overlaps(left_label)
       first_in_string = first_in_string - right_label
     }
 
@@ -86,11 +85,12 @@ object overlap {
       current_label = first_in_string.iterator.next
       while (current_label != null) {
         val left = reads(current_label)
-        val at = prefix_at.get(current_label)
-        if (at == None) {
+        val right = overlaps.get(current_label)
+        if (right == None) {
           print(left + "\n")
         } else {
-          print(left.slice(0,at.get))
+          val (at,_) = right.get
+          print(left.slice(0,at))
         }
         current_label = prefix_label.getOrElse(current_label,null)
       }
