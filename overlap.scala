@@ -63,29 +63,28 @@ object overlap {
     // right side (a value of any key in prefixes)
     var first_in_string = overlaps.keys.toSet
     var overlap_i = overlaps.keys.iterator
-
     while(overlap_i.hasNext) {
       val left_label = overlap_i.next
       val (_,right_label) = overlaps(left_label)
       first_in_string = first_in_string - right_label
     }
 
+    // there should be a single label left in the set: first_in_string.
     if (first_in_string.size == 1) {
       var current_label = first_in_string.iterator.next
-      current_label = first_in_string.iterator.next
       while (current_label != null) {
         val left = reads(current_label)
-        val right = overlaps.get(current_label)
-        if (right == None) {
-          // we've reached the last read of the string: print the last read and a carriage return.
-          print(left + "\n")
-        } else {
-          val (at,_) = right.get
-          print(left.slice(0,at))
-        }
         val (at,next_label) = overlaps.getOrElse(current_label,(null,null))
         current_label = next_label
+        if (next_label == null) {
+          // we've reached the last read of the string: print the entire last read, not just a prefix of it.
+          print(left)
+        } else {
+          print(left.slice(0,at))
+        }
       }
+      // at the end of the string, so print a carriage return
+      print("\n")
     } else {
       System.err.println(" Error: no unique first read.")
     }
