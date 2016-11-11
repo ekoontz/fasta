@@ -34,7 +34,6 @@ object overlap {
         print(left.slice(0,at))
       }
     }
-    // at the end of the string.
     print("\n")
     System.exit(0)
   }
@@ -83,7 +82,7 @@ object overlap {
         overlaps += (left_label -> (at,right_label))
       }
     }
-    overlaps
+    return overlaps
   }
 
   def find_overlap(left_read:String,reads:Map[String,String]):(Integer,String) = {
@@ -99,7 +98,9 @@ object overlap {
         return (at,right_label)
       }
     }
-    return (0,"") // TODO: throw exception
+    // in this case, left_read is located at the end of the entire string and has no
+    // string overlapping its right side.
+    return (0,"")
   }
 
   def left_right_overlap(left: String,right:String): Integer = {
