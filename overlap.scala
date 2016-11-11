@@ -63,7 +63,7 @@ object overlap {
       line match {
         case delimiter_pattern(label) => {
           if (current_label != "") {
-            // done with the previous read, so save it to the _reads_ map.
+            // done with the previous read, so insert it into the _reads_ map.
             reads += (current_label -> current_read)
           }
           current_label = label
@@ -75,7 +75,7 @@ object overlap {
         }
       }
     }
-    // save the final read in the file in the returned map.
+    // insert the final read in the file in the returned map.
     reads += (current_label -> current_read)
 
     return reads
