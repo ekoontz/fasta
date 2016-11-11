@@ -65,10 +65,10 @@ object overlap {
     // find the first of the reads: the one which is not a
     // right side (a value of any key in prefixes)
     var first_in_string = overlaps.keys.toSet
-    var prefix_label_i = overlaps.keys.iterator
+    var overlap_i = overlaps.keys.iterator
 
-    while(prefix_label_i.hasNext) {
-      val left_label = prefix_label_i.next
+    while(overlap_i.hasNext) {
+      val left_label = overlap_i.next
       val (_,right_label) = overlaps(left_label)
       first_in_string = first_in_string - right_label
     }
