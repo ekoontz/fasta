@@ -9,28 +9,33 @@ object overlap {
       System.exit(1)
     }
 
-    // Load reads from filename given in first supplied argument into
+    // 1. Load reads from filename given in first supplied argument into
     // a map from labels (e.g. "Rosalind_1836") to reads: strings made
     // of characters from the set: {A,C,G,T}.
     val reads = read_input(args(0))
 
-    // Create a map from labels to a pair:[l,at], where _l_ is the
-    // overlapping label and _at_ is the position in the first label
+    // 2. Create a map from labels to a pair:[l,at], where _l_ is the
+    // oerlapping label and _at_ is the position in the first label
     // where the overlap starts.
     val overlaps = find_overlaps(reads)
 
-    // Find the first read in the string from the above map.
+    // 3. Find the leftmost read in the string from the above
+    // map. Because it's at the far left of the entire string, it has
+    // no counterpart which overlaps with it on its left side.
     var current_label = find_leftmost_read(overlaps)
 
-    // Print out the entire string, starting with the first read.
+    // 4. Print out the entire string, starting with the left read and
+    // working right to the end of the string.
     while (current_label != null) {
       val left = reads(current_label)
       val (at,next_label) = overlaps.getOrElse(current_label,(null,null))
       current_label = next_label
       if (next_label == null) {
-        // we've reached the last read of the string: print the entire last read, not just a prefix of it.
+        // We've reached the last read of the string: print the entire last read, not just a prefix of it.
         print(left)
       } else {
+        // Print the left side of the current read that is not shared
+        // by the current read on its right side with another read.
         print(left.slice(0,at))
       }
     }
@@ -38,7 +43,7 @@ object overlap {
     System.exit(0)
   }
 
-  // read input from file named _filename_ into a map from
+  // Read input from file named _filename_ into a map from
   // a label (e.g. "Rosalind_1280") to a 'read':
   // a string made of characters from the set: {A,C,G,T}.
   def read_input(input_filename: String): Map[String,String] = {
@@ -82,6 +87,8 @@ object overlap {
   }
 
   def find_overlaps(reads:Map[String,String]):Map[String,(Integer,String)] = {
+    // For each read, find its counterpart, if any, that overlaps this
+    // read on the read's right side.
     var overlaps = Map[String,(Integer,String)]()
 
     val lefts = reads.keysIterator
@@ -98,6 +105,8 @@ object overlap {
   }
 
   def find_overlap(left_read:String,reads:Map[String,String]):(Integer,String) = {
+    // Given a read _left_read_, find the read, if any, that overlaps
+    // on the right side of _left_read_.
     val rights = reads.keysIterator
     while(rights.hasNext) {
       val right_label = rights.next
@@ -106,11 +115,12 @@ object overlap {
       val at = left_right_overlap(left_read,right_read)
 
       if (at > 0) {
-        // we found the overlap.
+        // We found the overlap: we can return at this point and avoid
+        // the time cost of looking at any other reads in _reads_.
         return (at,right_label)
       }
     }
-    // in this case, left_read is located at the end of the entire string and has no
+    // In this case, left_read is located at the end of the entire string and has no
     // string overlapping its right side.
     return (0,"")
   }
@@ -134,8 +144,8 @@ object overlap {
   }
 
   def find_leftmost_read(overlaps:Map[String,(Integer,String)]):String = {
-    // find the leftmost of the reads: the one which does not overlap
-    // any other read's right side right side.
+    // Find the leftmost of the reads: the one which does not overlap
+    // any other read's right side.
     var first_in_string = overlaps.keys.toSet
     var overlap_i = overlaps.keys.iterator
     while(overlap_i.hasNext) {
@@ -144,7 +154,7 @@ object overlap {
       first_in_string = first_in_string - right_label
     }
 
-    // there should be a single label left in the set: first_in_string.
+    // There should be a single label left in the set: first_in_string.
     if (first_in_string.size != 1) {
       System.err.println(" Error: no unique first read.")
       System.exit(1)
