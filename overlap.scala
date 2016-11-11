@@ -3,31 +3,22 @@ object overlap {
     println("usage: overlap <input file>")
   }
 
-  def left_right_overlap(a: String,b:String): Integer = {
+  def left_right_overlap(left: String,right:String): Integer = {
     // Find i, if any, such that:
     // - i > 0
-    // - i < a.length
-    // - a[i,a.length] == b[0,a.length]
-    //
-    // If none, return 0
-    for(i <- 1 to (a.length / 2)) {
-      if (a.slice(i,a.length) == b.slice(0,a.length - i)) {
+    // - i < left.length
+    // - the substring of _left_ which begins at i is equal
+    //   (characterwise) to the substring of _right_ that begins at at
+    //   the beginning of _right_ and is as long as the aforementioned
+    //   substring of _left_.  If no such i, return 0.
+    // TODO: return Option[None] as is the Scala
+    // convention for e.g. Map.get()
+    for(i <- 1 to (left.length / 2)) {
+      if (left.slice(i,left.length) == right.slice(0,left.length - i)) {
         return i
       }
     }
     return 0
-  }
-
-  def log_finding(first_label:String, right_label:String,
-    a:String, b:String, at: Integer) {
-    val show_this_many_chars = 10
-    println(first_label + "@" + at + " is a prefix of " +
-      right_label + ": " +
-      a.slice(at,at + show_this_many_chars) + "..." +
-      a.slice(a.length - show_this_many_chars,a.length) + " == " +
-      b.slice(0,show_this_many_chars) + "..." +
-      b.slice(a.length - at - show_this_many_chars,
-        (a.length - at)))
   }
 
   def main(args: Array[String]): Unit = {
@@ -77,13 +68,12 @@ object overlap {
     if (first_in_string.size == 1) {
       var current_label = first_in_string.iterator.next
       while (current_label != null) {
-        print(current_label)
+        System.err.print(current_label)
         current_label = prefix_label.getOrElse(current_label,null)
         if (current_label != null) {
-          print(" -> ")
+          System.err.print(" -> ")
         }
       }
-      println("")
       current_label = first_in_string.iterator.next
       while (current_label != null) {
         val left = reads(current_label)
@@ -96,7 +86,7 @@ object overlap {
         current_label = prefix_label.getOrElse(current_label,null)
       }
     } else {
-      println(" Error: no unique first read.")
+      System.err.println(" Error: no unique first read.")
     }
   }
 
@@ -104,9 +94,9 @@ object overlap {
   // a label (e.g. "Rosalind_1280") to a 'read':
   // a string made of characters from the set: {A,C,G,T}.
   def read_input(input_filename: String): Map[String,String] = {
-    println("reading from input file:" + input_filename)
+    System.err.println("reading from input file:" + input_filename)
     val contents = scala.io.Source.fromFile(input_filename).mkString
-    println(" length of file:" + contents.length)
+    System.err.println(" length of file:" + contents.length)
 
     // split into strings
     val lines = contents.split("\n")
@@ -128,14 +118,18 @@ object overlap {
         }
       }
     }
-
     return reads
-
   }
 
+  def log_finding(first_label:String, right_label:String,
+    a:String, b:String, at: Integer) {
+    val show_this_many_chars = 10
+    System.err.println(first_label + "@" + at + " is a prefix of " +
+      right_label + ": " +
+      a.slice(at,at + show_this_many_chars) + "..." +
+      a.slice(a.length - show_this_many_chars,a.length) + " == " +
+      b.slice(0,show_this_many_chars) + "..." +
+      b.slice(a.length - at - show_this_many_chars,
+        (a.length - at)))
+  }
 }
-
-
-
-
-
