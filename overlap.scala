@@ -46,8 +46,6 @@ object overlap {
     // load reads into a map from labels (e.g. "Rosalind_1836") to 
     // reads: strings made of characters from the set: {A,C,G,T}.
     val reads = read_input(args(0))
-
-    var prefix_label = Map[String,String]()
     var overlaps = Map[String,(Integer,String)]()
 
     val lefts = reads.keysIterator
@@ -57,7 +55,6 @@ object overlap {
 
       val (at,right_label) = find_overlap(left_read,reads)
       if (at != 0) {
-        prefix_label = prefix_label + (left_label -> right_label)
         overlaps += (left_label -> (at,right_label))
       }
     }
@@ -75,24 +72,19 @@ object overlap {
 
     if (first_in_string.size == 1) {
       var current_label = first_in_string.iterator.next
-      while (current_label != null) {
-        System.err.print(current_label)
-        current_label = prefix_label.getOrElse(current_label,null)
-        if (current_label != null) {
-          System.err.print(" -> ")
-        }
-      }
       current_label = first_in_string.iterator.next
       while (current_label != null) {
         val left = reads(current_label)
         val right = overlaps.get(current_label)
         if (right == None) {
+          // we've reached the last read of the string: print the last read and a carriage return.
           print(left + "\n")
         } else {
           val (at,_) = right.get
           print(left.slice(0,at))
         }
-        current_label = prefix_label.getOrElse(current_label,null)
+        val (at,next_label) = overlaps.getOrElse(current_label,(null,null))
+        current_label = next_label
       }
     } else {
       System.err.println(" Error: no unique first read.")
