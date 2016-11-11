@@ -50,9 +50,11 @@ object overlap {
     // e.g match ">Rosalind_1836" and extract "Rosalind_1836".
     val delimiter_pattern = """^>(.*)""".r 
 
+    // we'll return this map after populating it with the input file's contents.
     var reads = Map[String,String]()
-    var current_label = ""
 
+    var current_label = ""
+    var current_read = ""
     // read file contents one line at a time.
     val lines = contents.split("\n")
     val it = lines.iterator
@@ -60,14 +62,13 @@ object overlap {
       var line = it.next()
       line match {
         case delimiter_pattern(label) => {
-          // found a label for a read: add a new entry to the _reads_ map, the key is the label;
-          // the read is initially an empty string.
-          reads += (label -> "")
           current_label = label
+          current_read = ""
         }
         case _ => {
-          // not a label, but the read of a label: concatenate to the read.
-          reads += (current_label -> (reads(current_label) + line))
+          // not a label, but the read of a label: concatenate to the current label's read.
+          current_read += line
+          reads += (current_label -> current_read)
         }
       }
     }
