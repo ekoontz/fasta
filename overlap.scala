@@ -20,7 +20,7 @@ object overlap {
     val overlaps = find_overlaps(reads)
 
     // Find the first read in the string from the above map.
-    var current_label = find_first_in_string(overlaps)
+    var current_label = find_leftmost_read(overlaps)
 
     // Print out the entire string, starting with the first read.
     while (current_label != null) {
@@ -46,23 +46,28 @@ object overlap {
     val contents = scala.io.Source.fromFile(input_filename).mkString
     System.err.println(" length of file:" + contents.length)
 
-    // split into strings
-    val lines = contents.split("\n")
+    // regex to extract label of the read.
+    // e.g match ">Rosalind_1836" and extract "Rosalind_1836".
+    val delimiter_pattern = """^>(.*)""".r 
 
-    val it = lines.iterator
-    val delimiter_pattern = """^>(.*)""".r
     var reads = Map[String,String]()
     var current_label = ""
 
+    // read file contents one line at a time.
+    val lines = contents.split("\n")
+    val it = lines.iterator
     while(it.hasNext) {
       var line = it.next()
       line match {
         case delimiter_pattern(label) => {
-          reads = reads + (label -> "")
+          // found a label for a read: add a new entry to the _reads_ map, the key is the label;
+          // the read is initially an empty string.
+          reads += (label -> "")
           current_label = label
         }
         case _ => {
-          reads = reads + (current_label -> (reads(current_label) + line))
+          // not a label, but the read of a label: concatenate to the read.
+          reads += (current_label -> (reads(current_label) + line))
         }
       }
     }
@@ -121,9 +126,9 @@ object overlap {
     return 0
   }
 
-  def find_first_in_string(overlaps:Map[String,(Integer,String)]):String = {
-    // find the first of the reads: the one which is not a
-    // right side (the second value of any key in the overlaps map)
+  def find_leftmost_read(overlaps:Map[String,(Integer,String)]):String = {
+    // find the leftmost of the reads: the one which does not overlap
+    // any other read's right side right side.
     var first_in_string = overlaps.keys.toSet
     var overlap_i = overlaps.keys.iterator
     while(overlap_i.hasNext) {
