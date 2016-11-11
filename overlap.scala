@@ -62,16 +62,22 @@ object overlap {
       var line = it.next()
       line match {
         case delimiter_pattern(label) => {
+          if (current_label != "") {
+            // done with the previous read, so save it to the _reads_ map.
+            reads += (current_label -> current_read)
+          }
           current_label = label
           current_read = ""
         }
         case _ => {
-          // not a label, but the read of a label: concatenate to the current label's read.
+          // not a delimiter: concatenate this line to the current label's read.
           current_read += line
-          reads += (current_label -> current_read)
         }
       }
     }
+    // save the final read in the file in the returned map.
+    reads += (current_label -> current_read)
+
     return reads
   }
 
