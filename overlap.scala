@@ -21,6 +21,23 @@ object overlap {
     return 0
   }
 
+  def find_overlap(left_read:String,reads:Map[String,String]):(Integer,String) = {
+    val rights = reads.keysIterator
+    while(rights.hasNext) {
+      val right_label = rights.next
+      val right_read = reads(right_label)
+
+      val at = left_right_overlap(left_read,right_read)
+
+      if (at > 0) {
+        // we found the overlap. add the label and the overlap position as key and value to the
+        // prefix_at and prefix_label maps.
+        return (at,right_label)
+      }
+    }
+    return (0,"") // TODO: throw exception
+  }
+
   def main(args: Array[String]): Unit = {
     if (args.length != 1) {
       usage()
@@ -38,19 +55,11 @@ object overlap {
     while(lefts.hasNext) {
       var left_label = lefts.next
       val left_read = reads(left_label)
-      val rights = reads.keysIterator
 
-      while(rights.hasNext) {
-        val right_label = rights.next
-        val right_read = reads(right_label)
-
-        val at = left_right_overlap(left_read,right_read)
-
-        if (at > 0) {
-          prefix_at = prefix_at + (left_label -> at)
-          prefix_label = prefix_label + (left_label -> right_label)
-          log_finding(left_label,right_label,left_read,right_read,at)
-        }
+      val (at,right_label) = find_overlap(left_read,reads)
+      if (at != 0) {
+        prefix_at = prefix_at + (left_label -> at)
+        prefix_label = prefix_label + (left_label -> right_label)
       }
     }
 
