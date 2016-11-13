@@ -15,11 +15,11 @@ object overlap {
     val sequences = read_input(args(0))
 
     // 2. Find a map from labels to a pair:[l,at], where _l_ is the
-    // overlapping label and _at_ is the position in the first label
-    // where the overlap starts.
-    //   Also, find the leftmost read in the string from the above
-    // map. Because it's at the far left of the entire string, it has
-    // no counterpart which overlaps with it on its left side.
+    //   overlapping label and _at_ is the position in the first label
+    //   where the overlap starts.  Also, find the label of the
+    //   leftmost sequence in the entire string from the above
+    //   map. Because it's at the far left of the entire string, it
+    //   has no counterpart which overlaps with it on its left side.
     val (overlaps,leftmost_label) = find_overlaps(sequences)
 
     // 3. Print out the entire string, starting with the left read and
@@ -96,14 +96,12 @@ object overlap {
     // This is the map that we'll return as the map of overlapping read pairs.
     var overlaps = Map[String,(Integer,String)]()
 
-    // We will return the single member of this set, but the set
-    // begins with all sequences. Initially, any of the sequences could be
-    // the leftmost, but we'll find the leftmost by process of
-    // elimination.
-    var leftmost_candidates = sequences.keys.toSet
-
-    // This is a subset of the sequences which have not yet been added as right-hand members of
-    // read pairs.
+    // This is a subset of the sequences which have not yet been added
+    // as right-hand members of read pairs. After finding each
+    // right-hand side of a pair, we remove that found right-hand side
+    // from this set. At the end, this subset will have a single
+    // member, which will be the leftmost sequence, since it was not
+    // yet added as a right-hand member of any overlap pair.
     var right_hand_candidates = sequences.keys.toSet
 
     val lefts = sequences.keysIterator
@@ -122,20 +120,15 @@ object overlap {
         // member of a pair, eliminate it from consideration as a
         // right-hand member of any other pair.
         right_hand_candidates -= right_label
-
-        // We now know that right_label cannot be the leftmost read,
-        // since it's the right side of an overlap pair. So eliminate it as
-        // a possibility of being the leftmost read.
-        leftmost_candidates -= right_label
       }
     }
     // There should be a single label left in the set: if not, exit
     // with an error.
-    if (leftmost_candidates.size != 1) {
-      System.err.println(" Error: no unique first read: size: " + leftmost_candidates.size)
+    if (right_hand_candidates.size != 1) {
+      System.err.println(" Error: no unique first read: size: " + right_hand_candidates.size)
       System.exit(1)
     }
-    return (overlaps,leftmost_candidates.iterator.next)
+    return (overlaps,right_hand_candidates.iterator.next)
   }
 
   /** Given a read _left_read_, return the read label of the read, if any, that overlaps
@@ -165,7 +158,7 @@ object overlap {
     *  - i > 0
     *  - i < left.length
     *  - the substring of _left_ which begins at i is equal
-    *    (characterwise) to the substring of _right_ that begins at at
+    *    (characterwise) to the substring of _right_ that begins at
     *    the beginning of _right_ and is as long as the aforementioned
     *   substring of _left_.
     *
