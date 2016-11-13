@@ -1,4 +1,4 @@
-== How to run ==
+# How to run
 
 overlap.scala can be compiled with:
 
@@ -12,7 +12,7 @@ For example:
 
     scala overlap coding_challenge_data_set.txt
 
-== Outline of algorithm ==
+# Outline of algorithm
 
 1. First, read in the input file into a map from
 labels to sequences; call this map: _sequences_.
@@ -48,7 +48,7 @@ contents.
 How the leftmost sequence is determined is described below in the
 section 'Finding the leftmost sequence'.
 
-== How `find_overlap()` works ==
+# How `find_overlap()` works
 
 `find_overlap()` works as follows. For its input left-hand sequence `a`,
 we consider each possible pair (`a`,`b`), where `b` is every other
@@ -83,7 +83,7 @@ because this sequence is at the right-hand end of the entire string
 and so there is nothing to the right of it. For this string,
 find_overlap returns a special tuple: `("",0)`.
 
-== Finding the leftmost sequence ==
+# Finding the leftmost sequence
 
 Fortunately, we don't need to do any extra work to determine the
 leftmost sequence, since the leftmost sequence turns out to be the
