@@ -109,7 +109,7 @@ object overlap {
       var left_label = lefts.next
       val left_read = reads(left_label)
 
-      val (at,right_label) = find_overlap(left_read,reads,right_hand_candidates)
+      val (right_label,at) = find_overlap(left_read,reads,right_hand_candidates)
       if (at != 0) {
         // Insert a pair in the overlaps map: right_label is the
         // right-hand member of the pair whose left-hand member is
@@ -136,26 +136,26 @@ object overlap {
     return (overlaps,leftmost_candidates.iterator.next)
   }
 
-  // Given a read _left_read_, return the read, if any, that overlaps
+  // Given a read _left_read_, return the read label of the read, if any, that overlaps
   // on the right side of _left_read_, and the right side's overlap offset (an integer).
   def find_overlap(left_read:String,reads:Map[String,String],right_hand_candidates:Set[String])
-      :(Integer,String) = {
+      :(String,Integer) = {
     var rights = right_hand_candidates.iterator
     while(rights.hasNext) {
       val right_label = rights.next
       val right_read = reads(right_label)
       val at = left_right_overlap(left_read,right_read)
 
-      if (at > 0) {
+      if (at != 0) {
         // We found the overlap: we can return at this point and avoid
         // the time cost of looking at any other reads in _reads_.
-        return (at,right_label)
+        return (right_label,at)
       }
     }
     // In this case, left_read is located at the far right end of the
-    // entire string and therefore has no other string overlapping its
-    // right side.
-    return (0,"")
+    // entire string and therefore has no other read overlapping on
+    // its right side.
+    return ("",0)
   }
 
   def left_right_overlap(left: String,right:String): Integer = {
