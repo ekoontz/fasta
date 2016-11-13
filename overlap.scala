@@ -9,10 +9,10 @@ object overlap {
       System.exit(1)
     }
 
-    // 1. Load reads from filename given in first supplied argument into
-    // a map from labels (e.g. "Rosalind_1836") to reads: strings made
+    // 1. Load sequences from filename given in first supplied argument into
+    // a map from labels (e.g. "Rosalind_1836") to sequences: strings made
     // of characters from the set: {A,C,G,T}.
-    val reads = read_input(args(0))
+    val sequences = read_input(args(0))
 
     // 2. Find a map from labels to a pair:[l,at], where _l_ is the
     // overlapping label and _at_ is the position in the first label
@@ -20,13 +20,13 @@ object overlap {
     //   Also, find the leftmost read in the string from the above
     // map. Because it's at the far left of the entire string, it has
     // no counterpart which overlaps with it on its left side.
-    val (overlaps,leftmost_label) = find_overlaps(reads)
+    val (overlaps,leftmost_label) = find_overlaps(sequences)
 
     // 3. Print out the entire string, starting with the left read and
     // working right to the end of the string.
     var current_label = leftmost_label
     while (current_label != null) {
-      val left = reads(current_label)
+      val left = sequences(current_label)
       val (at,next_label) = overlaps.getOrElse(current_label,(null,null))
       current_label = next_label
       if (next_label == null) {
@@ -56,7 +56,7 @@ object overlap {
     val delimiter_pattern = """^>(.*)""".r 
 
     // we'll return this map after populating it with the input file's contents.
-    var reads = Map[String,String]()
+    var sequences = Map[String,String]()
 
     var current_label = ""
     var current_read = ""
@@ -68,8 +68,8 @@ object overlap {
       line match {
         case delimiter_pattern(label) => {
           if (current_label != "") {
-            // done with the previous read, so insert it into the _reads_ map.
-            reads += (current_label -> current_read)
+            // done with the previous read, so insert it into the _sequences_ map.
+            sequences += (current_label -> current_read)
           }
           current_label = label
           current_read = ""
@@ -81,9 +81,9 @@ object overlap {
       }
     }
     // insert the final read in the file in the returned map.
-    reads += (current_label -> current_read)
+    sequences += (current_label -> current_read)
 
-    return reads
+    return sequences
   }
 
   /** Return a map of overlapping read pairs: the key of the map is
@@ -91,27 +91,27 @@ object overlap {
     * of the overlap. Return this map, and also the leftmost read, for which there
     * is no corresponding left counterpart: no other read overlaps it on its left side.
     */
-  def find_overlaps(reads:Map[String,String]):(Map[String,(Integer,String)],String) = {
+  def find_overlaps(sequences:Map[String,String]):(Map[String,(Integer,String)],String) = {
 
     // This is the map that we'll return as the map of overlapping read pairs.
     var overlaps = Map[String,(Integer,String)]()
 
     // We will return the single member of this set, but the set
-    // begins with all reads. Initially, any of the reads could be
+    // begins with all sequences. Initially, any of the sequences could be
     // the leftmost, but we'll find the leftmost by process of
     // elimination.
-    var leftmost_candidates = reads.keys.toSet
+    var leftmost_candidates = sequences.keys.toSet
 
-    // This is a subset of the reads which have not yet been added as right-hand members of
+    // This is a subset of the sequences which have not yet been added as right-hand members of
     // read pairs.
-    var right_hand_candidates = reads.keys.toSet
+    var right_hand_candidates = sequences.keys.toSet
 
-    val lefts = reads.keysIterator
+    val lefts = sequences.keysIterator
     while(lefts.hasNext) {
       var left_label = lefts.next
-      val left_read = reads(left_label)
+      val left_read = sequences(left_label)
 
-      val (right_label,at) = find_overlap(left_read,reads,right_hand_candidates)
+      val (right_label,at) = find_overlap(left_read,sequences,right_hand_candidates)
       if (at != 0) {
         // Insert a pair in the overlaps map: right_label is the
         // right-hand member of the pair whose left-hand member is
@@ -141,17 +141,17 @@ object overlap {
   /** Given a read _left_read_, return the read label of the read, if any, that overlaps
     * on the right side of _left_read_, and the right side's overlap offset (an integer).
     */
-  def find_overlap(left_read:String,reads:Map[String,String],right_hand_candidates:Set[String])
+  def find_overlap(left_read:String,sequences:Map[String,String],right_hand_candidates:Set[String])
       :(String,Integer) = {
     var rights = right_hand_candidates.iterator
     while(rights.hasNext) {
       val right_label = rights.next
-      val right_read = reads(right_label)
+      val right_read = sequences(right_label)
       val at = left_right_overlap(left_read,right_read)
 
       if (at != 0) {
         // We found the overlap: we can return at this point and avoid
-        // the time cost of looking at any other reads in _reads_.
+        // the time cost of looking at any other sequences in _sequences_.
         return (right_label,at)
       }
     }
