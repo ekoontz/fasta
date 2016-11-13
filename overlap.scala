@@ -14,18 +14,17 @@ object overlap {
     // of characters from the set: {A,C,G,T}.
     val reads = read_input(args(0))
 
-    // 2. Create a map from labels to a pair:[l,at], where _l_ is the
-    // oerlapping label and _at_ is the position in the first label
+    // 2. Find a map from labels to a pair:[l,at], where _l_ is the
+    // overlapping label and _at_ is the position in the first label
     // where the overlap starts.
-    val overlaps = find_overlaps(reads)
-
-    // 3. Find the leftmost read in the string from the above
+    //   Also, find the leftmost read in the string from the above
     // map. Because it's at the far left of the entire string, it has
     // no counterpart which overlaps with it on its left side.
-    var current_label = find_leftmost_read(overlaps)
+    val (overlaps,leftmost_label) = find_overlaps(reads)
 
-    // 4. Print out the entire string, starting with the left read and
+    // 3. Print out the entire string, starting with the left read and
     // working right to the end of the string.
+    var current_label = leftmost_label
     while (current_label != null) {
       val left = reads(current_label)
       val (at,next_label) = overlaps.getOrElse(current_label,(null,null))
@@ -86,10 +85,12 @@ object overlap {
     return reads
   }
 
-  def find_overlaps(reads:Map[String,String]):Map[String,(Integer,String)] = {
+  def find_overlaps(reads:Map[String,String]):(Map[String,(Integer,String)],String) = {
     // For each read, find its counterpart, if any, that overlaps this
     // read on the read's right side.
     var overlaps = Map[String,(Integer,String)]()
+
+    var first_in_string = reads.keys.toSet
 
     val lefts = reads.keysIterator
     while(lefts.hasNext) {
@@ -99,9 +100,15 @@ object overlap {
       val (at,right_label) = find_overlap(left_read,reads)
       if (at != 0) {
         overlaps += (left_label -> (at,right_label))
+        first_in_string -= right_label
       }
     }
-    return overlaps
+    // There should be a single label left in the set: if not, exit with an error.
+    if (first_in_string.size != 1) {
+      System.err.println(" Error: no unique first read: size: " + first_in_string.size)
+      System.exit(1)
+    }
+    return (overlaps,first_in_string.iterator.next)
   }
 
   def find_overlap(left_read:String,reads:Map[String,String]):(Integer,String) = {
@@ -133,7 +140,7 @@ object overlap {
     //   (characterwise) to the substring of _right_ that begins at at
     //   the beginning of _right_ and is as long as the aforementioned
     //   substring of _left_.  If no such i, return 0.
-    // TODO: return Option[None] as is the Scala
+    // TODO: return Option[None] rather than 0, as is the Scala
     // convention for e.g. Map.get()
     for(i <- 1 to (left.length / 2)) {
       if (left.slice(i,left.length) == right.slice(0,left.length - i)) {
@@ -141,29 +148,5 @@ object overlap {
       }
     }
     return 0
-  }
-
-  def find_leftmost_read(overlaps:Map[String,(Integer,String)]):String = {
-    // Find the leftmost of the reads: the one which does not overlap
-    // any other read's right side.
-
-    // Begin with the set of all reads, and remove all reads that are to the right
-    // of some other read. The surviving single member of the set is the leftmost read.
-    var first_in_string = overlaps.keys.toSet
-    var overlap_i = overlaps.keys.iterator
-    while(overlap_i.hasNext) {
-      val left_label = overlap_i.next
-      val (_,right_label) = overlaps(left_label)
-      // Remove _right_label_ as a possible leftmost read, since it's to the right
-      // of some other read.
-      first_in_string = first_in_string - right_label
-    }
-
-    // There should be a single label left in the set: if not, exit with an error.
-    if (first_in_string.size != 1) {
-      System.err.println(" Error: no unique first read.")
-      System.exit(1)
-    }
-    return first_in_string.iterator.next
   }
 }
