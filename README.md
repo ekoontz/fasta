@@ -19,16 +19,16 @@ labels to sequences; call this map: _sequences_.
 
 2. Next, iterate through the sequences. For each such sequence `a`,
 find the corresponding sequence `b` where `a` and `b` overlap in the
-sense that there is a substring shared by `a` and `b` for which:
+sense that there is a substring `s` shared by `a` and `b` for which:
 
-- a suffix of the first (left-hand) member of pair
-- a prefix of the second (right-hand) member of the pair
-- the substring is longer than half of both members of the pair.
+- s is a suffix of the first (left-hand) member of pair
+- s is a prefix of the second (right-hand) member of the pair
+- s is longer than half of both members of the pair.
 
 As a `b` is found for each `a`, we save this correspondence in a map
 called `overlaps`, keyed on `a`'s label, where the value is a pair of
-`b`'s label, and an offset location within `a` where the shared substring
-begins.
+`b`'s label, and an offset location within `a` where the shared
+substring `s` begins within `a`.
 
 Note that in this step, in addition to returning the pair, we also must
 return the offset position from the beginning of the first member of
