@@ -42,9 +42,10 @@ object overlap {
     System.exit(0)
   }
 
-  // Read input from file named _filename_ into a map from
-  // a label (e.g. "Rosalind_1280") to a 'read':
-  // a string made of characters from the set: {A,C,G,T}.
+  /** Returns a map from read labels (e.g. "Rosalind_128") to the read
+    * for that label: a string made of characters from the set:
+    * {A,C,G,T}, by reading from a file named input_filename.
+    */
   def read_input(input_filename: String): Map[String,String] = {
     System.err.println("reading from input file:" + input_filename)
     val contents = scala.io.Source.fromFile(input_filename).mkString
@@ -85,10 +86,11 @@ object overlap {
     return reads
   }
 
-  // Return a map of overlapping read pairs: the key of the map is
-  // the left side of the overlap, and the value is the right side
-  // of the overlap. Return this map, and also the leftmost read, for which there
-  // is no corresponding left counterpart: no other read overlaps it on its left side.
+  /** Return a map of overlapping read pairs: the key of the map is
+    * the left side of the overlap, and the value is the right side
+    * of the overlap. Return this map, and also the leftmost read, for which there
+    * is no corresponding left counterpart: no other read overlaps it on its left side.
+    */
   def find_overlaps(reads:Map[String,String]):(Map[String,(Integer,String)],String) = {
 
     // This is the map that we'll return as the map of overlapping read pairs.
@@ -136,8 +138,9 @@ object overlap {
     return (overlaps,leftmost_candidates.iterator.next)
   }
 
-  // Given a read _left_read_, return the read label of the read, if any, that overlaps
-  // on the right side of _left_read_, and the right side's overlap offset (an integer).
+  /** Given a read _left_read_, return the read label of the read, if any, that overlaps
+    * on the right side of _left_read_, and the right side's overlap offset (an integer).
+    */
   def find_overlap(left_read:String,reads:Map[String,String],right_hand_candidates:Set[String])
       :(String,Integer) = {
     var rights = right_hand_candidates.iterator
@@ -158,16 +161,17 @@ object overlap {
     return ("",0)
   }
 
+  /** Return i, if any, such that:
+    *  - i > 0
+    *  - i < left.length
+    *  - the substring of _left_ which begins at i is equal
+    *    (characterwise) to the substring of _right_ that begins at at
+    *    the beginning of _right_ and is as long as the aforementioned
+    *   substring of _left_.
+    *
+    *  If no such i, return 0.
+    */
   def left_right_overlap(left: String,right:String): Integer = {
-    // Find i, if any, such that:
-    // - i > 0
-    // - i < left.length
-    // - the substring of _left_ which begins at i is equal
-    //   (characterwise) to the substring of _right_ that begins at at
-    //   the beginning of _right_ and is as long as the aforementioned
-    //   substring of _left_.  If no such i, return 0.
-    // TODO: return Option[None] rather than 0, as is the Scala
-    // convention for e.g. Map.get()
     for(i <- 1 to (left.length / 2)) {
       if (left.slice(i,left.length) == right.slice(0,left.length - i)) {
         return i
