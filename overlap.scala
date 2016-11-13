@@ -86,14 +86,16 @@ object overlap {
   }
 
   def find_overlaps(reads:Map[String,String]):(Map[String,(Integer,String)],String) = {
+
     // Return a map of overlapping read pairs: the key of the map is
     // the left side of the overlap, and the value is the right side
     // of the overlap. Return this map, and also the leftmost read, for which there
     // is no corresponding left counterpart: no other read overlaps it on its left side.
+
     var overlaps = Map[String,(Integer,String)]()
 
-    // Initially, any of the reads could be the leftmost, but we'll find the leftmost by
-    // process of elimination.
+    // Initially, any of the reads could be the leftmost, but we'll
+    // find the leftmost by process of elimination.
     var leftmost_candidates = reads.keys.toSet
 
     val lefts = reads.keysIterator
@@ -103,13 +105,19 @@ object overlap {
 
       val (at,right_label) = find_overlap(left_read,reads)
       if (at != 0) {
+        // Insert a pair in the overlaps map: right_label is the
+        // right-hand member of the pair whose left-hand member is
+        // left_label.
         overlaps += (left_label -> (at,right_label))
-        // right_label is not the leftmost, since it's the right side of left_label.
-        // so eliminate it as a possibility of being the leftmost read.
+
+        // We now know that right_label cannot be the leftmost read,
+        // since it's the right side of an overlap pair. So eliminate it as
+        // a possibility of being the leftmost read.
         leftmost_candidates -= right_label
       }
     }
-    // There should be a single label left in the set: if not, exit with an error.
+    // There should be a single label left in the set: if not, exit
+    // with an error.
     if (leftmost_candidates.size != 1) {
       System.err.println(" Error: no unique first read: size: " + leftmost_candidates.size)
       System.exit(1)
