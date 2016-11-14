@@ -2,7 +2,7 @@
 
 overlap.scala can be compiled with:
 
-	      scalac overlap.scala
+    scalac overlap.scala
 
 And run with:
 
@@ -93,8 +93,12 @@ is not a right-hand overlap of any other sequence.
 
 # Evaluation code
 
-evaluate.scala can be compiled and ran with the same argument as with overlap.scala. It
-prints out information about each sequences, from leftmost to rightmost:
+evaluate.scala can be compiled and ran with the same argument as with overlap.scala:
+
+    scala evaluate coding_challenge_data_set.txt
+
+It prints out information about each sequences, from leftmost to
+rightmost:
 
 - The first 10 and last 10 characters of each sequence.
 - The first 10 and last 10 characters of each shared subsequence in each overlap.
