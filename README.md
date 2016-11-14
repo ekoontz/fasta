@@ -90,3 +90,30 @@ leftmost sequence, since the leftmost sequence turns out to be the
 sole remaining member of the above-mentioned `right_hand_candidates`
 set. This is because the leftmost sequence is the only sequence which
 is not a right-hand overlap of any other sequence.
+
+# Evaluation code
+
+evaluate.scala can be compiled and ran with the same argument as with overlap.scala. It
+prints out information about each sequences, from leftmost to rightmost:
+
+- The first 10 and last 10 characters of each sequence.
+- The first 10 and last 10 characters of each shared subsequence in each overlap.
+- The next sequence in the overlapping chain.
+
+The beginning of the sample input is shown below:
+
+```
+% scala evaluate coding_challenge_data_set.txt
+reading from input file:coding_challenge_data_set.txt
+ length of file:51118
+Rosalind_0505 [TTCATACCTC..CGGTATTAAA]
+Rosalind_0505@392 is a prefix of Rosalind_9944: AAGATCGCAA...CGGTATTAAA == AAGATCGCAA...CGGTATTAAA
+
+Rosalind_9944 [AAGATCGCAA..GGGTCGATTA]
+Rosalind_9944@434 is a prefix of Rosalind_2165: TCAGCCATTA...GGGTCGATTA == TCAGCCATTA...GGGTCGATTA
+
+Rosalind_2165 [TCAGCCATTA..TTCCACCGCA]
+Rosalind_2165@388 is a prefix of Rosalind_0372: CGGACGCCGG...TTCCACCGCA == CGGACGCCGG...TTCCACCGCA
+```
+
+
