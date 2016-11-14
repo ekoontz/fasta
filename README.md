@@ -124,6 +124,7 @@ Rosalind_2165@388 is a prefix of Rosalind_0372: CGGACGCCGG...TTCCACCGCA == CGGAC
 ```
 
 Note that, as expected, the 10 characters at the end of each left
-sequence is the same as the first 10 characters of each right sequence
-(e.g. `CGGTATTAAA` == `CGGTATTAAA`, `GGGTCGATTA` == `GGGTCGATTA`, etc).
+sequence is the same as the last 10 characters in the end of the
+shared subsequence in each right sequence (e.g. `CGGTATTAAA` ==
+`CGGTATTAAA`, `GGGTCGATTA` == `GGGTCGATTA`, etc).
 
