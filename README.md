@@ -107,7 +107,7 @@ rightmost:
 - The first 10 and last 10 characters of each shared subsequence in each overlap.
 - The next sequence in the overlapping chain.
 
-The beginning of the sample input is shown below:
+The beginning of `evaluate`'s output is shown below:
 
 ```
 % scala evaluate coding_challenge_data_set.txt
@@ -123,4 +123,7 @@ Rosalind_2165 [TCAGCCATTA..TTCCACCGCA]
 Rosalind_2165@388 is a prefix of Rosalind_0372: CGGACGCCGG...TTCCACCGCA == CGGACGCCGG...TTCCACCGCA
 ```
 
+Note that, as expected, the 10 characters at the end of each left
+sequence is the same as the first 10 characters of each right sequence
+(e.g. CGGTATTAAA == CGGTATTAAA, GGGTCGATTA == GGGTCGATTA, etc).
 
