@@ -75,12 +75,11 @@ consists of every possible sequence except the first. When we call
 file `a`, we pass along this set. `find_overlap` uses this set as the
 source of possible right hand candidates. For this first call, we must
 compare `a` with every other sequence, since the set
-`right_hand_candidates` contains every possible sequence besides
-itself. However, when `find_overlap` returns the right-hand sequence
-`b`, we can remove this `b` for the set of possible
-`right_hand_candidates` for all other overlaps. Thus, each call to
-`find_overlap` needs to consider a smaller and smaller set of right
-hand candidates.
+`right_hand_candidates` contains every possible sequence. However,
+when `find_overlap` returns the right-hand sequence `b`, we can remove
+this `b` for the set of possible `right_hand_candidates` for all other
+overlaps. Thus, each call to `find_overlap` needs to consider a
+smaller and smaller set of right hand candidates.
 
 There is one sequence for which there is no right-hand counterpart
 because this sequence is at the right-hand end of the entire string
