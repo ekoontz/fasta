@@ -107,9 +107,8 @@ object overlap {
     val lefts = sequences.keysIterator
     while(lefts.hasNext) {
       var left_label = lefts.next
-      val left_read = sequences(left_label)
 
-      val (right_label,at) = find_overlap(left_read,sequences,right_hand_candidates)
+      val (right_label,at) = find_overlap(left_label,sequences,right_hand_candidates)
       if (at != 0) {
         // Insert a pair in the overlaps map: right_label is the
         // right-hand member of the pair whose left-hand member is
@@ -131,26 +130,30 @@ object overlap {
     return (overlaps,right_hand_candidates.iterator.next)
   }
 
-  /** Given a read _left_read_, return the read label of the read, if any, that overlaps
-    * on the right side of _left_read_, and the right side's overlap offset (an integer).
+  /** Given a label _left_label_, return the read label of the sequence,
+    * if any, that overlaps on the right side of _left_label_'s
+    * sequence, and the right side's overlap offset (an integer).
     */
-  def find_overlap(left_read:String,sequences:Map[String,String],right_hand_candidates:Set[String])
+  def find_overlap(left_label:String,sequences:Map[String,String],right_hand_candidates:Set[String])
       :(String,Integer) = {
+    val left_read = sequences(left_label)
     var rights = right_hand_candidates.iterator
     while(rights.hasNext) {
       val right_label = rights.next
-      val right_read = sequences(right_label)
-      val at = left_right_overlap(left_read,right_read)
+      if (left_label != right_label) { // avoid checking if a sequence overlaps itself.
+        val right_read = sequences(right_label)
+        val at = left_right_overlap(left_read,right_read)
 
-      if (at != 0) {
-        // We found the overlap: we can return at this point and avoid
-        // the time cost of looking at any other sequences in _sequences_.
-        return (right_label,at)
+        if (at != 0) {
+          // We found the overlap: we can return at this point and avoid
+          // the time cost of looking at any other sequences in _sequences_.
+          return (right_label,at)
+        }
       }
     }
-    // In this case, left_read is located at the far right end of the
-    // entire string and therefore has no other read overlapping on
-    // its right side.
+    // In this case, left_label's sequence is located at the far right
+    // end of the entire string and therefore has no other read
+    // overlapping on its right side.
     return ("",0)
   }
 
