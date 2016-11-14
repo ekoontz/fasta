@@ -24,22 +24,23 @@ labels to sequences; call this map: _sequences_.
 find the corresponding sequence `b` where `a` and `b` overlap in the
 sense that there is a substring `s` shared by `a` and `b` for which:
 
-- `s` is a suffix of the first (left-hand) member of pair
-- `s` is a prefix of the second (right-hand) member of the pair
-- `s` is longer than half of both members of the pair.
+- `s` is a suffix of `a`
+- `s` is a prefix of `b`
+- `s` is longer than half of both `a` and `b`.
 
 As a `b` is found for each `a`, we save this correspondence in a map
 called `overlaps`, keyed on `a`'s label, where the value is a pair of
 `b`'s label, and an offset location within `a` where the shared
 substring `s` begins within `a`.
 
-Note that in this step, in addition to returning the pair, we also must
-return the offset position from the beginning of the first member of
-the pair, so that in step 3, we can print the resulting whole string
-without repeating the overlapping section.
+Note that in this step, in addition to returning the pair, we also
+must return the offset position from the beginning of `a`, so
+that in step 3, we can print the resulting whole string without
+repeating the overlapping section.
 
-The function that, given a sequence, finds its right-hand counterpart
-sequence and offset, is called `find_overlap()`.
+The function that, given a sequence `a`, finds its right-hand
+counterpart sequence `b` and offset into `a`, is called
+`find_overlap()`.
 
 3. Finally we print out the contents of the `overlaps` map, starting
 with the leftmost sequence, printing out each such sequence in such a
