@@ -12,6 +12,9 @@ For example:
 
     scala overlap coding_challenge_data_set.txt
 
+The entire chromosome will be printed to standard output and a few
+diagnostic messages will be printed to standard error.
+
 # Outline of algorithm
 
 1. First, read in the input file into a map from
