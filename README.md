@@ -21,9 +21,9 @@ labels to sequences; call this map: _sequences_.
 find the corresponding sequence `b` where `a` and `b` overlap in the
 sense that there is a substring `s` shared by `a` and `b` for which:
 
-- s is a suffix of the first (left-hand) member of pair
-- s is a prefix of the second (right-hand) member of the pair
-- s is longer than half of both members of the pair.
+- `s` is a suffix of the first (left-hand) member of pair
+- `s` is a prefix of the second (right-hand) member of the pair
+- `s` is longer than half of both members of the pair.
 
 As a `b` is found for each `a`, we save this correspondence in a map
 called `overlaps`, keyed on `a`'s label, where the value is a pair of
@@ -51,7 +51,7 @@ section 'Finding the leftmost sequence'.
 # How `find_overlap()` works
 
 `find_overlap()` works as follows. For its input left-hand sequence `a`,
-we consider each possible pair (`a`,`b`), where `b` is every other
+we consider each possible pair (`a`,`b`), where `b` is another
 sequence. We look at each possible suffix in `a` that is longer than
 half the length of `a`. For each such suffix, we compare it to the
 prefix of `b` of the same length. If the suffix of `a` and the prefix
